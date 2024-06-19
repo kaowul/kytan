@@ -48,10 +48,14 @@ jobs:
           ${{ runner.os }}-cargo-build-
 
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --release --verbose
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: build-output
-        path: target/debug/ 
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: target/release/kytan
+        asset_name: kytan
+        asset_content_type: application/octet-stream
