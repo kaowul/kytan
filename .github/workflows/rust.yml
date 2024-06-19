@@ -56,10 +56,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.0  # Replace with your tag name
-        release_name: Release v1.0.0  # Replace with your release name
+        tag_name: v1.0.1  # Replace with your tag name
+        release_name: Release v1.0.1  # Replace with your release name
         body: |
-          Release of version 1.0.0
+          Release of version 1.0.1
         draft: false
         prerelease: false
 
