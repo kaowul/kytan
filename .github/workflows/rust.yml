@@ -48,7 +48,11 @@ jobs:
           ${{ runner.os }}-cargo-build-
 
     - name: Build
-      run: cargo build --release  
+      run: cargo build --release
+
+    - name: Determine Version
+      id: version
+      run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
 
     - name: Create Release
       id: create_release
@@ -56,12 +60,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.1  # Replace with your tag name
-        release_name: Release v1.0.1  # Replace with your release name
+        tag_name: ${{ steps.version.outputs.version }}
+        release_name: Release ${{ steps.version.outputs.version }}
         body: |
-          Release of version 1.0.1
+          Release of version ${{ steps.version.outputs.version }}
         draft: false
         prerelease: false
+
+    - name: Zip Release Asset
+      run: zip -r kytan-${{ steps.version.outputs.version }}.zip target/release/kytan
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -70,6 +77,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/release/kytan
-        asset_name: kytan
-        asset_content_type: application/octet-stream
+        asset_path: kytan-${{ steps.version.outputs.version }}.zip
+        asset_name: kytan-${{ steps.version.outputs.version }}.zip
+        asset_content_type: application/zip
